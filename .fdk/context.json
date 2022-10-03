@@ -1,0 +1,11 @@
+{
+  "partners": {
+    "current_context": "default",
+    "contexts": {
+      "default": {
+        "partner_access_token": "mB8XPkJU4",
+        "host": "api.fyndx0.de"
+      }
+    }
+  }
+}
