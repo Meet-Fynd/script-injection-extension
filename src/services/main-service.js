@@ -28,6 +28,15 @@ const MainService = {
     },
     removeInjectableTagsById(id) {
         return axios.delete(URLS.DELETE_INJECTABLE_TAGS_BY_ID(id))
+    },
+    getProxy(application_id) {
+        return axios.get(URLS.GET_APPLICATION_PROXY(application_id))
+    },
+    addProxy(application_id) {
+        return axios.get(URLS.ADD_APPLICATION_PROXY(application_id))
+    },
+    removeProxy(application_id) {
+        return axios.get(URLS.REMOVE_APPLICATION_PROXY(application_id))
     }
 }
 

@@ -31,6 +31,15 @@ const Endpoints = {
   },
   DELETE_INJECTABLE_TAGS_BY_ID(id) {
     return urlJoin(envVars.EXAMPLE_MAIN_URL, `/api/v1/test/injection/${id}`)
+  },
+  GET_APPLICATION_PROXY(application_id) {
+    return urlJoin(envVars.EXAMPLE_MAIN_URL, `/api/v1/proxy/${application_id}`)
+  },
+  ADD_APPLICATION_PROXY(application_id) {
+    return urlJoin(envVars.EXAMPLE_MAIN_URL, `/api/v1/proxy/add/${application_id}`)
+  },
+  REMOVE_APPLICATION_PROXY(application_id) {
+    return urlJoin(envVars.EXAMPLE_MAIN_URL, `/api/v1/proxy/remove/${application_id}`)
   }
 };
 

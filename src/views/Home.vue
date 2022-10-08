@@ -64,6 +64,7 @@ export default {
       applications_list: [],
       all_applications: [],
       pageLoading: false,
+      proxyLoader: false
     };
   },
   mounted() {
@@ -117,40 +118,61 @@ export default {
       })
     },
 
-    // addInjectableTags(id) {
-    //   MainService.addInjecttableTagsById(id).then(({data}) => {
-    //     console.log("######", data)
-    //   }).catch(err => {
-    //     console.log(err)
-    //   })
-    // },
-    // deleteInjectableTagsData(id) {
-    //   MainService.removeInjectableTagsById(id).then(({data}) => {
-    //     console.log("#####", data)
-    //   }).catch(err => {
-    //     console.log(err)
-    //   })
-    // },
-
-
     // Button Methods
-    togChange(id, state){
+    togChange(application_id, state){
       if (state) {
         console.log("Inside If")
-        MainService.addInjecttableTagsById(id).then(() => {
+        MainService.addInjecttableTagsById(application_id).then(() => {
           console.log("Script Injected")
         }).catch(err => {
           console.log(err)
         })
+        this.getProxy(application_id)
 
       } else {
         console.log("Inside Else")
-        MainService.removeInjectableTagsById(id).then(() => {
+        MainService.removeInjectableTagsById(application_id).then(() => {
           console.log("Injected Script Removed!!")
         }).catch(err => {
           console.log(err)
         })
+        this.removeProxy(application_id)
       }
+    },
+
+    // proxy methods
+    getProxy(application_id) {
+      this.proxyLoader = true;
+      return MainService.getProxy(application_id).then(() => {
+        this.proxyLoader = false
+      }).catch((err) => {
+        console.log(err.response, "getProxy Error")
+        if (err.response.status == 400) {
+          this.addProxy(application_id)
+        } else {
+          this.proxyLoader = false
+        }
+      })
+    },
+
+    addProxy(application_id) {
+      return MainService.addProxy(application_id).then((res) => {
+        console.log(res, "addProxy Response")
+      }).catch((err) => {
+        console.log(err.response, "addProxy Error")
+      }).finally(() => {
+        this.proxyLoader = false
+      })
+    },
+
+    removeProxy(application_id) {
+      return MainService.removeProxy(application_id).then((res) => {
+        console.log(res, "removeProxy Response")
+      }).catch((err) => {
+        console.log(err.response, "removeProxy Error")
+      }).finally(() => {
+        this.proxyLoader = false
+      })
     }
   },
 };

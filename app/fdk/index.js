@@ -4,7 +4,7 @@ const { setupFdk } = require("fdk-extension-javascript/express");
 const { RedisStorage } = require("fdk-extension-javascript/express/storage");
 const config =  require("../config");
 const { appRedis } = require("./../common/redis.init");
-const { ScriptInjectionRecord } = require("../connections/mongo")
+const { ScriptInjectionRecord, ScriptProxyPathRecord } = require("../connections/mongo")
 
 let fdkExtension = setupFdk({
     api_key: config.extension.api_key,
@@ -23,10 +23,8 @@ let fdkExtension = setupFdk({
             // Write your code here to cleanup data related to extension
             // If task is time taking then process it async on other process.
             const { company_id } = req.body
-            await ScriptInjectionRecord.updateMany(
-                { company_id: company_id },
-                { is_active: false }
-            )
+            await ScriptInjectionRecord.deleteMany({ company_id: company_id })
+            await ScriptProxyPathRecord.deleteMany({company_id: company_id})
         }
     },
     storage: new RedisStorage(appRedis,"exapmple-fynd-platform-extension"), // add your prefix

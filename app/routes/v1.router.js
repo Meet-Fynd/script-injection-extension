@@ -12,13 +12,13 @@ router.get('/test-api', (req, res, next) => {
 });
 
 let scriptContent = `
-const newsletterHeadElm = document.getElementsByTagName('head')[0];
+const scriptInjectionHead = document.getElementsByTagName('head')[0];
 const script = document.createElement('script');
 script.setAttribute('type','text/javascript');
 script.setAttribute('async',true);
 script.text = 'alert("hello from test-extension")'
-if (newsletterHeadElm) {
-    newsletterHeadElm.appendChild(script);
+if (scriptInjectionHead) {
+    scriptInjectionHead.appendChild(script);
 }`
 
 scriptContent = Buffer.from(scriptContent).toString('base64')
@@ -122,12 +122,12 @@ router.post('/test/injection/:application_id', async function view(req, res, nex
                 scriptInjectionRecord.save()
             } else {
                 // injection script is already available
-                res.status(200).json({"Message": "Script Already Created!!"})
+                return res.status(200).json({"Message": "Script Already Created!!"})
             }
         
         } else {
             // script is not activated for application
-            const data =  await platformClient.application(application_id).content.addInjectableTag(
+            var data =  await platformClient.application(application_id).content.addInjectableTag(
                 { body: createTagSchema }
             )
             const scriptInjection = {
@@ -136,9 +136,9 @@ router.post('/test/injection/:application_id', async function view(req, res, nex
                 script_id: data.tags[0]._id,
                 is_active: true
             }
-            new ScriptInjectionRecord(scriptInjection).save()
+            await new ScriptInjectionRecord(scriptInjection).save()
         }
-        res.status(201).end()
+        return res.status(200).json(data)
     } catch(err) {
         next(err)
     }
@@ -157,18 +157,28 @@ router.delete('/test/injection/:application_id', async function view(req, res, n
         
         // if script record is not in mongodb
         if (!scriptInjectionRecord) {
-            res.status(404).json({"Error": "Injection Script for this application is not available!!"})
+            return res.status(404).json({"Error": "Injection Script for this application is not available!!"})
         } else {
             // deleting script from application
             await platformClient.application(application_id).content.removeInjectableTag({
                 body: { tags: [scriptInjectionRecord.script_id] }
             })
             // deleting script record from DB
-            scriptInjectionRecord.delete()
-            res.status(204).end()
+            await scriptInjectionRecord.delete()
+            return res.status(204).end()
         }
     } catch(err) {
         next(err)
+    }
+})
+
+
+router.post("/proxy-text", async (req, res) => {
+    try {
+        console.log(req)
+        return res.status(201).json({"Message": "Tada!!! your proxy is working"})
+    } catch(err) {
+        console.log(err)
     }
 })
 

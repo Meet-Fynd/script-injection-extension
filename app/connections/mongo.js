@@ -23,6 +23,33 @@ const ScriptInjectionSchema = new mongoose.Schema({
     }
 })
 
-const ScriptInjectionRecord = mongoose.model('ScriptInjection', ScriptInjectionSchema)
 
-module.exports = { ScriptInjectionRecord };
+const ScriptProxyPathSchema = new mongoose.Schema({
+    application_id: {
+        type: String,
+        required: true
+    },
+    company_id: {
+        type: String,
+        required: true
+    },
+    attached_path: {
+        type: String,
+        required: true
+    }
+})
+
+ScriptProxyPathSchema.index(
+    {
+        application_id: 1,
+        company_id: 1
+    },
+    {
+        unique: true
+    }
+)
+
+const ScriptInjectionRecord = mongoose.model('ScriptInjection', ScriptInjectionSchema)
+const ScriptProxyPathRecord = mongoose.model('ScriptProxyPathRecord', ScriptProxyPathSchema)
+
+module.exports = { ScriptInjectionRecord, ScriptProxyPathRecord };
